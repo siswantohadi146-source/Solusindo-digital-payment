@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PPOB Dinamis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 40px;
+    }
+    .container {
+      max-width: 500px;
+      background: #fff;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+    }
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .output {
+      margin-top: 20px;
+      background: #e6f7ff;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>PPOB Dinamis</h2>
+
+    <label for="service">Pilih Layanan:</label>
+    <select id="service" onchange="updateNominal()">
+      <option value="">-- Pilih --</option>
+      <option value="pulsa">Pulsa</option>
+      <option value="listrik">Listrik</option>
+      <option value="air">Air</option>
+    </select>
+
+    <label for="number">Nomor Pelanggan:</label>
+    <input type="text" id="number" placeholder="Contoh: 08123456789" />
+
+    <label for="nominal">Pilih Nominal:</label>
+    <select id="nominal">
+      <option value="">-- Pilih layanan dulu --</option>
+    </select>
+
+    <button onclick="bayar()">Bayar Sekarang</button>
+
+    <div class="output" id="output" style="display: none;"></div>
+  </div>
+
+  <script>
+    const dataPPOB = {
+      pulsa: [
+        { nominal: "10.000", harga: 10500 },
+        { nominal: "25.000", harga: 25500 },
+        { nominal: "50.000", harga: 50000 }
+      ],
+      listrik: [
+        { nominal: "20.000", harga: 20500 },
+        { nominal: "50.000", harga: 50500 },
+        { nominal: "100.000", harga: 100000 }
+      ],
+      air: [
+        { nominal: "50.000", harga: 52000 },
+        { nominal: "100.000", harga: 102000 },
+        { nominal: "200.000", harga: 202000 }
+      ]
+    };
+
+    function updateNominal() {
+      const service = document.getElementById("service").value;
+      const nominalSelect = document.getElementById("nominal");
+      nominalSelect.innerHTML = "<option value=''>-- Pilih --</option>";
+
+      if (dataPPOB[service]) {
+        dataPPOB[service].forEach((item, index) => {
+          const option = document.createElement("option");
+          option.value = index;
+          option.text = `${item.nominal} - Rp${item.harga.toLocaleString()}`;
+          nominalSelect.appendChild(option);
+        });
+      }
+    }
+
+    function bayar() {
+      const service = document.getElementById("service").value;
+      const number = document.getElementById("number").value.trim();
+      const nominalIndex = document.getElementById("nominal").value;
+      const output = document.getElementById("output");
+
+      if (!service || !number || nominalIndex === "") {
+        alert("Silakan lengkapi semua data.");
+        return;
+      }
+
+      const item = dataPPOB[service][nominalIndex];
+
+      output.innerHTML = `
+        <strong>Detail Transaksi:</strong><br/>
+        Layanan: ${service.charAt(0).toUpperCase() + service.slice(1)}<br/>
+        Nomor Pelanggan: ${number}<br/>
+        Nominal: ${item.nominal}<br/>
+        Harga: Rp${item.harga.toLocaleString()}<br/><br/>
+        <em>Simulasi pembayaran berhasil ✔️</em>
+      `;
+      output.style.display = "block";
+    }
+  </script>
+</body>
+</html>
